@@ -18,6 +18,7 @@
     "colord": "^2.9.2",
     "cra-envs": "^1.2.6",
     "dayjs": "^1.11.7",
+    "dotenv-getter": "^1.1.1",
     "eslint-config-react-app": "^7.0.1",
     "geojson-validation": "^1.0.2",
     "graphql": "^16.3.0",

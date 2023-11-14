@@ -2,10 +2,12 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import DatasetOutlinedIcon from '@mui/icons-material/DatasetOutlined';
 import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
+import BiotechIcon from '@mui/icons-material/Biotech';
 import React from 'react';
 
 export const menu = [
   {
+    //Accueil (Home)
     icon: <HomeOutlinedIcon />,
     title: 'menu.home.title',
     description: 'menu.home.description',
@@ -13,6 +15,7 @@ export const menu = [
     items: []
   },
   {
+    //Gestion des données (Data Management)
     icon: <DatasetOutlinedIcon />,
     title: 'menu.dataManagement.title',
     description: 'menu.dataManagement.description',
@@ -30,6 +33,7 @@ export const menu = [
     ]
   },
   {
+    //Sécurité (Security)
     icon: <SecurityOutlinedIcon />,
     title: 'menu.security.title',
     description: 'menu.security.description',
@@ -42,6 +46,7 @@ export const menu = [
     ]
   },
   {
+    //Administration => {Tenant ; Service ; RessurceType}
     icon: <AdminPanelSettingsOutlinedIcon />,
     title: 'menu.administration.title',
     description: 'menu.administration.description',
@@ -66,6 +71,19 @@ export const menu = [
         route: '/ResourceType',
         withRole: 'tenant-admin',
         withSuperAdmin: true,
+        items: []
+      }
+    ]
+  },
+  {
+    //Sécurité (Security)
+    icon: <BiotechIcon />,
+    title: 'menu.test.title',
+    description: 'menu.test.description',
+    items: [
+      {
+        title: 'menu.test.title',
+        route: '/restriction',
         items: []
       }
     ]

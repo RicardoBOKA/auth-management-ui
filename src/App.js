@@ -28,6 +28,9 @@ import EntityPage from './pages/entityPage';
 import HomePage from './pages/homePage';
 import ErrorPage from './pages/errorPage';
 import AlarmsPage from './pages/alarmsPage';
+
+import RestrictionPage from './pages/restrictionPage'; //Test
+
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import UserMenu from './components/shared/userMenu';
@@ -650,6 +653,9 @@ export default class App extends Component {
                           </AuthorizedElement>
                         }
                       />
+
+                      <Route path="/restriction" element={<RestrictionPage />} />
+
                       <Route
                         path="Service"
                         element={

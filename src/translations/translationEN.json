@@ -71,7 +71,10 @@
       "agentGroup": "Group name",
       "agentClass": "User role",
       "actorTitle": "Actors settings",
-      "mainTitle": "Main data"
+      "mainTitle": "Main data",
+      
+      "restriction":"Restriction",
+      "restrictionType":"Restriction Type"
     }
   },
   "resourceType": {
@@ -200,6 +203,10 @@
     },
     "resourcetype": {
       "title": "Resource Types"
+    },
+    "test":{
+      "title":"Restriction",
+      "description": "Ceci est un bloc test pour comprendre la logique et la structure du code. On va commencer avec une restriciton"
     }
   },
   "common": {
