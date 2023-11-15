@@ -139,6 +139,7 @@ export default function PolicyForm({
   const handleMode = (event) => {
     setMode(event.target.value);
   };
+
   const checkAgenTypes = (arr, values) => {
     return values.every((value) => {
       return arr.includes(value);
