@@ -12,7 +12,6 @@
     "clean": "rm -rf package-lock.json && rm -rf node_modules && rm -rf coverage",
     "lint": "eslint main/ --cache --fix",
     "test": "mocha test/*.test.js",
-    "prettier": "prettier --config .prettierrc.json --write '**/**/**/*.js' '**/**/*.js' '**/*.js'",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {

@@ -71,8 +71,27 @@
       "agentGroup": "Group name",
       "agentClass": "User role",
       "actorTitle": "Actors settings",
-      "mainTitle": "Main data",
-      
+      "mainTitle": "Main data"
+    }
+  },    
+  "restriction": {
+    "titles": {
+      "page": "Restriction page",
+      "new": "New Restriction",
+      "edit": "Edit Rstriction"
+    },
+    "table": {
+      "access": "Resource",
+      "path": "Service path",
+      "resourceType": "Resource Type",
+      "actor": "Actor",
+      "mode": "Mode"
+    },
+    "filters": {
+      "mode": "Mode{{name}}",
+      "path": "service path{{name}}"
+    },
+    "form": {
       "restriction":"Restriction",
       "restrictionType":"Restriction Type"
     }

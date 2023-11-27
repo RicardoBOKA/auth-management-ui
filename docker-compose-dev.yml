@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   policy-api:
-    image: anubis:v1 # orchestracities/anubis-management-api:master
+    image: anubis:v2 # orchestracities/anubis-management-api:master
     networks:
       - envoymesh
     environment:

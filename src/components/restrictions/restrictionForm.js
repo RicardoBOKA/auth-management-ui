@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import RestrictionTable from './restrictionTable';
+// import RestrictionTable from './restrictionTable';
 import Grid from '@mui/material/Grid';
 import { Button, TextField, Autocomplete, Box } from '@mui/material';
 import axios from 'axios';
+import RestrictionTable2 from './restrictionTable2';
 
 export default function RestrictionForm() {
   const [data, setData] = useState([]);
@@ -20,7 +21,12 @@ export default function RestrictionForm() {
     console.log('---');
     setName(newValue.name);
   };
-  const options = [{ name: 'Time Restriction' }, { name: 'String' }, { name: 'Start Restriction' }];
+  const options = [
+    { name: 'Time Restriction' },
+    { name: 'String' },
+    { name: 'Start Restriction' },
+    { name: 'Policy Restriction' }
+  ];
 
   const handleDelete = () => {
     axios
@@ -44,6 +50,7 @@ export default function RestrictionForm() {
         headers: { Accept: 'application/json' }
       });
       setData(response.data);
+      console.log(response);
     } catch (error) {
       console.error('Erreur lors de la requête GET :', error);
     }
@@ -81,10 +88,17 @@ export default function RestrictionForm() {
   };
 
   return (
-    <Grid container spacing={2}>
-      <RestrictionTable data={data}>
-        <Box> Restrction </Box>
-      </RestrictionTable>
+    <Grid container spacing={2} flex={1}>
+      <Grid item xs={12}>
+        <Grid container spacing={2} direction="column">
+          <Grid item>
+            <RestrictionTable2 data={data} setData={fetchData} />
+          </Grid>
+          <Grid item>
+            <Box>Restriction</Box>
+          </Grid>
+        </Grid>
+      </Grid>
 
       <Grid item xs={12} sx={{ flexDirection: 'column', alignItems: 'center', marginBottom: 2 }}>
         <h2>Post a Restriction</h2>
@@ -93,9 +107,9 @@ export default function RestrictionForm() {
           id="restrction-name"
           options={options}
           sx={{ marginBottom: 2, width: '100%' }}
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option) => (option.name ? option.name : name)}
           getOptionSelected={(option, value) => option.name === value.name}
-          renderInput={(params) => <TextField {...params} label="Movie" />}
+          renderInput={(params) => <TextField {...params} label="Restriction" />}
           onChange={handleAutocompleteChange}
           value={options.find((option) => option.name === name) || 'Non defini'}
         />
@@ -141,3 +155,7 @@ export default function RestrictionForm() {
     </Grid>
   );
 }
+
+// "prestart": "generate-env-getter js && prettier --write './**/*.{js,jsx}' --config .prettierrc.json",
+// "pretest": "generate-env-getter js && prettier --write './**/*.{js,jsx}' --config .prettierrc.json",
+// "prettier": "prettier --write './**/*.{js,jsx}' --config .prettierrc.json",
