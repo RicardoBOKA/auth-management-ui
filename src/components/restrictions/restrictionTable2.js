@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+import { Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 // import { useMemo } from 'react';
@@ -26,11 +28,54 @@ const columns = [
   { field: 'table_target_id', headerName: 'Table Target ID', flex: 1 }
 ];
 
-export default function RestrictionTable({ data, setData }) {
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+export default function restrictionTable2({ data, setNewData }) {
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const [changement, setChangement] = useState(true);
+  // const [localData, setLocalData] = useState(data);
 
-  const test = (newRowSelectionModel) => {
-    console.log('newRowSelectionModel : ' + newRowSelectionModel);
+  // const fetchData = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8085/v1/restrictions/', {
+  //       headers: { Accept: 'application/json' }
+  //     });
+  //     setLocalData(response.data);
+  //     // setData(response.data);
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.error('Erreur lors de la requête GET :', error);
+  //   }
+  // };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8085/v1/restrictions/', {
+        headers: { Accept: 'application/json' }
+      });
+      setNewData(response.data);
+      // console.log('responseee' + response);
+    } catch (error) {
+      console.error('Erreur lors de la requête GET :', error);
+    }
+  };
+
+  // useEffect(() => {
+  //   fetchData();
+  //   // setLocalData(data);
+  // }, [data, setData]);
+
+  // useEffect(() => {
+  //   console.log('DATA = ' + data);
+  // }, [data]);
+
+  useEffect(() => {
+    fetchData();
+  }, [changement]);
+
+  const rowSelection = (newRowSelectionModel) => {
+    console.log('Selection : ');
+    newRowSelectionModel.forEach((element) => {
+      console.log(element);
+    });
     setRowSelectionModel(newRowSelectionModel);
   };
 
@@ -41,9 +86,23 @@ export default function RestrictionTable({ data, setData }) {
     table_target_id: `${item.table_target_id.split(':')[1]}:${item.table_target_id.split(':')[2]}`
   }));
 
+  // const rows = useMemo(() => {
+  //   data.map((item) => ({
+  //     id: item.id,
+  //     name: item.name,
+  //     table_target: item.table_target_id.split(':')[0],
+  //     table_target_id: `${item.table_target_id.split(':')[1]}:${item.table_target_id.split(':')[2]}`
+  //   }));
+  // }, [data]);
+
+  useEffect(() => {
+    console.log('DATA = ' + data);
+  }, []);
+
   const handleDelete = () => {
-    // Utilisez selectedRows pour accéder aux lignes sélectionnées
+    let i = 0;
     rowSelectionModel.forEach((row) => {
+      i++;
       axios
         .delete(`http://localhost:8085/v1/restrictions/${row}`, {
           headers: {
@@ -51,19 +110,22 @@ export default function RestrictionTable({ data, setData }) {
           }
         })
         .then(() => {
-          const updatedData = data.filter((item) => item.id !== row);
-          setData(updatedData);
-          console.log('Row deleted : ' + row);
+          // console.log('i = ' + i);
+          // const updatedData = localData.filter((item) => item.id !== row);
+          // console.log('updatedData : ' + updatedData);
+          // setData(updatedData);
+          // setLocalData(updatedData);
+          setChangement((changement) => !changement);
+          console.log('Row deleted ' + 'i = ' + i + ' : ' + row);
         })
         .catch((error) => {
-          // setResult(`Error : ${error.message}`);
           console.log(`Error : ${error.message}`);
         });
     });
   };
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
+    <div style={{ height: 800, width: 1200 }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -76,10 +138,12 @@ export default function RestrictionTable({ data, setData }) {
         checkboxSelection
         disableSelectionOnClick // optionnel : désactive la sélection au clic sur la ligne
         autoHeight
-        onRowSelectionModelChange={test}
+        onRowSelectionModelChange={rowSelection}
         rowSelectionModel={rowSelectionModel}
       />
-      <button onClick={handleDelete}>Supprimer les éléments sélectionnés</button>
+      <Button variant="contained" color="primary" onClick={handleDelete}>
+        Supprimer les éléments sélectionnés
+      </Button>
     </div>
   );
 }
