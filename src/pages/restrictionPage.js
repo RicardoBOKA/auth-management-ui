@@ -14,23 +14,13 @@ export default function RestrictionPage() {
     console.log('newData reçue de restrictionForm :', newData);
     setData(newData);
   };
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:8085/v1/restrictions/', {
-  //       headers: { Accept: 'application/json' }
-  //     });
-  //     setData(response.data);
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.error('Erreur lors de la requête GET :', error);
-  //   }
-  // };
 
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:8085/v1/restrictions/', {
         headers: { Accept: 'application/json' }
       });
+      console.log('responseeee = ', response.data[0].data);
       setData(response.data);
       console.log(response);
     } catch (error) {

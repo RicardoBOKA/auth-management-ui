@@ -25,7 +25,8 @@ const columns = [
   { field: 'id', headerName: 'ID', width: 300 },
   { field: 'name', headerName: 'Name', flex: 1 },
   { field: 'table_target', headerName: 'Table Target', flex: 1 },
-  { field: 'table_target_id', headerName: 'Table Target ID', flex: 1 }
+  { field: 'table_target_id', headerName: 'Table Target ID', flex: 1 },
+  { field: 'data', headerName: 'Data', flex: 1 }
 ];
 
 export default function restrictionTable2({ data, setNewData }) {
@@ -33,39 +34,20 @@ export default function restrictionTable2({ data, setNewData }) {
   const [changement, setChangement] = useState(true);
   // const [localData, setLocalData] = useState(data);
 
-  // const fetchData = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:8085/v1/restrictions/', {
-  //       headers: { Accept: 'application/json' }
-  //     });
-  //     setLocalData(response.data);
-  //     // setData(response.data);
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.error('Erreur lors de la requête GET :', error);
-  //   }
-  // };
-
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:8085/v1/restrictions/', {
         headers: { Accept: 'application/json' }
       });
+      // const parsedRestrictions = response.data.map((restriction) => ({
+      //   ...restriction,
+      //   parsedData: restriction.data ? JSON.parse(restriction.data) : null
+      // }));
       setNewData(response.data);
-      // console.log('responseee' + response);
     } catch (error) {
       console.error('Erreur lors de la requête GET :', error);
     }
   };
-
-  // useEffect(() => {
-  //   fetchData();
-  //   // setLocalData(data);
-  // }, [data, setData]);
-
-  // useEffect(() => {
-  //   console.log('DATA = ' + data);
-  // }, [data]);
 
   useEffect(() => {
     fetchData();
@@ -82,18 +64,11 @@ export default function restrictionTable2({ data, setNewData }) {
   const rows = data.map((item) => ({
     id: item.id,
     name: item.name,
+    data: item.data ? item.data : 'N/A',
+    // data: item.parsedData ? item.parsedData.value : 'N/A',
     table_target: item.table_target_id.split(':')[0],
     table_target_id: `${item.table_target_id.split(':')[1]}:${item.table_target_id.split(':')[2]}`
   }));
-
-  // const rows = useMemo(() => {
-  //   data.map((item) => ({
-  //     id: item.id,
-  //     name: item.name,
-  //     table_target: item.table_target_id.split(':')[0],
-  //     table_target_id: `${item.table_target_id.split(':')[1]}:${item.table_target_id.split(':')[2]}`
-  //   }));
-  // }, [data]);
 
   useEffect(() => {
     console.log('DATA = ' + data);
