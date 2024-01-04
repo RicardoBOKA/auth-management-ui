@@ -31,6 +31,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import { ApolloClient, InMemoryCache, gql, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { useState } from 'react';
+import RestrictionForm from '../restrictions/restrictionForm';
+import AddButton from '../shared/addButton';
 
 const CustomDialogTitle = styled(AppBar)({
   position: 'relative',
@@ -52,6 +55,30 @@ export default function PolicyForm({
   env
 }) {
   const [msg, sendNotification] = useNotification();
+  const [open, setOpen] = useState(false);
+
+  const addRestriction = async (name, target_name, target_id, dataPayload) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8085/v1/restrictions/?target_name=${target_name}&target_id=${target_id}`,
+        {
+          name: name,
+          data: JSON.stringify(dataPayload)
+        },
+        {
+          headers: {
+            Accept: '*/*',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log('Restriction ajoutée :', response.data);
+      setOpen(false);
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de la restriction :", error);
+    }
+  };
+
   typeof env === 'undefined' ? log.setDefaultLevel('debug') : log.setLevel(env.LOG_LEVEL);
   const httpLink = createHttpLink({
     uri: typeof env !== 'undefined' ? env.CONFIGURATION_API_URL : ''
@@ -628,6 +655,12 @@ export default function PolicyForm({
               </Select>
               <FormHelperText error={errorCases(formType)}>{errorText(formType)}</FormHelperText>
             </FormControl>
+            <AddButton
+              pageType={<RestrictionForm onClose={() => setOpen(false)} onAddRestriction={addRestriction} />}
+              setOpen={setOpen}
+              status={open}
+              graphqlErrors={null}
+            />
           </Grid>
           <Zoom
             in={formType !== '' && formType === 'specific'}

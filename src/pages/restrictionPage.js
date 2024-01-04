@@ -31,6 +31,29 @@ export default function RestrictionPage() {
     fetchData();
   }, []);
 
+  const addRestriction = async (name, target_name, target_id, dataPayload) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:8085/v1/restrictions/?target_name=${target_name}&target_id=${target_id}`,
+        {
+          name: name,
+          data: JSON.stringify(dataPayload)
+        },
+        {
+          headers: {
+            Accept: '*/*',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      fetchData();
+      return response.data;
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de la restriction :", error);
+      throw error.response;
+    }
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid>
@@ -42,7 +65,7 @@ export default function RestrictionPage() {
           </Grid>
         </Grid>
         <AddButton
-          pageType={<RestrictionForm close={setOpen} setNewData={changeData}></RestrictionForm>}
+          pageType={<RestrictionForm onClose={() => setOpen(false)} onAddRestriction={addRestriction} />}
           setOpen={setOpen}
           status={open}
           graphqlErrors={null}
