@@ -9,39 +9,11 @@ export default function RestrictionForm({ onClose, onAddRestriction }) {
   const [data, setData] = useState(['']);
   const [name, setName] = useState('');
 
-  // const [optionsNameRestriction, setOptionsNameRestriction] = useState(['']);
-
-  // const fetchTargetID = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:8085/v1/restrictions/', {
-  //       headers: { Accept: 'application/json' }
-  //     });
-
-  //     setNewData(response.data);
-  //   } catch (error) {
-  //     console.error('Erreur lors de la requête GET :', error);
-  //   }
-  // };
-
   const handleAutocompleteChange = (event, newValue) => {
     console.log('---');
     console.log(newValue.name);
     setName(newValue.name);
   };
-  // const handleNewData = async () => {
-  //   try {
-  //     const response = await axios.get('http://localhost:8085/v1/restrictions/', {
-  //       headers: { Accept: 'application/json' }
-  //     });
-  //     setNewData(response.data);
-  //   } catch (error) {
-  //     console.error('Erreur lors de la requête GET :', error);
-  //   }
-  // };
-  // const handleClose = () => {
-  //   handleNewData();
-  //   close(false);
-  // };
 
   const handleClose = () => {
     onClose();
@@ -79,37 +51,6 @@ export default function RestrictionForm({ onClose, onAddRestriction }) {
       console.error("Une erreur s'est produite :", error);
     }
   };
-
-  // const handleSave = async () => {
-  //   console.log('---');
-  //   console.log(typeof name);
-  //   console.log(name);
-
-  //   const dataType = getDataTypeForRestriction();
-  //   const dataPayload = {
-  //     type: dataType,
-  //     value: data
-  //   };
-
-  //   try {
-  //     await axios.post(
-  //       `http://localhost:8085/v1/restrictions/?target_name=${target_name}&target_id=${target_id}`,
-  //       {
-  //         name: name,
-  //         data: JSON.stringify(dataPayload)
-  //       },
-  //       {
-  //         headers: {
-  //           Accept: '*/*',
-  //           'Content-Type': 'application/json'
-  //         }
-  //       }
-  //     );
-  //     handleClose();
-  //   } catch (error) {
-  //     console.error("Une erreur s'est produite :", error);
-  //   }
-  // };
 
   //DATA POUR LES AUTOCOMPLETION DE CHAQUE PAERTIE DE POST DATA.
   //1

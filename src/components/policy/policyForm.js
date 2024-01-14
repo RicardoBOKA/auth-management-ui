@@ -33,7 +33,7 @@ import { ApolloClient, InMemoryCache, gql, createHttpLink } from '@apollo/client
 import { setContext } from '@apollo/client/link/context';
 import { useState } from 'react';
 import RestrictionForm from '../restrictions/restrictionForm';
-import AddButton from '../shared/addButton';
+// import AddButton from '../shared/addButton';
 
 const CustomDialogTitle = styled(AppBar)({
   position: 'relative',
@@ -57,13 +57,13 @@ export default function PolicyForm({
   const [msg, sendNotification] = useNotification();
   const [open, setOpen] = useState(false);
 
-  const addRestriction = async (name, target_name, target_id, dataPayload) => {
+  const addRestriction = async (name, target_name, target_id, data) => {
     try {
       const response = await axios.post(
         `http://localhost:8085/v1/restrictions/?target_name=${target_name}&target_id=${target_id}`,
         {
           name: name,
-          data: JSON.stringify(dataPayload)
+          data: JSON.stringify(data)
         },
         {
           headers: {
@@ -655,12 +655,12 @@ export default function PolicyForm({
               </Select>
               <FormHelperText error={errorCases(formType)}>{errorText(formType)}</FormHelperText>
             </FormControl>
-            <AddButton
+            {/* <AddButton
               pageType={<RestrictionForm onClose={() => setOpen(false)} onAddRestriction={addRestriction} />}
               setOpen={setOpen}
               status={open}
               graphqlErrors={null}
-            />
+            /> */}
           </Grid>
           <Zoom
             in={formType !== '' && formType === 'specific'}
@@ -827,6 +827,9 @@ export default function PolicyForm({
               </Grid>
             </Grid>
           </Zoom>
+          <Grid>
+            <RestrictionForm onClose={() => setOpen(open)} onAddRestriction={addRestriction} />
+          </Grid>
         </Grid>
       </DialogContent>
     </div>

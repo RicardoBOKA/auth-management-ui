@@ -101,21 +101,23 @@ export default function restrictionTable2({ data, setNewData }) {
 
   return (
     <div style={{ height: 800, width: 1200 }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 5 }
-          }
-        }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        disableSelectionOnClick // optionnel : désactive la sélection au clic sur la ligne
-        autoHeight
-        onRowSelectionModelChange={rowSelection}
-        rowSelectionModel={rowSelectionModel}
-      />
+      <div style={{ marginBottom: '20px' }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 }
+            }
+          }}
+          pageSizeOptions={[5, 10]}
+          checkboxSelection
+          disableSelectionOnClick // optionnel : désactive la sélection au clic sur la ligne
+          autoHeight
+          onRowSelectionModelChange={rowSelection}
+          rowSelectionModel={rowSelectionModel}
+        />
+      </div>
       <Button variant="contained" color="primary" onClick={handleDelete}>
         Supprimer les éléments sélectionnés
       </Button>
