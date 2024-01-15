@@ -20,7 +20,6 @@ export default function RestrictionPage() {
       const response = await axios.get('http://localhost:8085/v1/restrictions/', {
         headers: { Accept: 'application/json' }
       });
-      console.log('responseeee = ', response.data[0].data);
       setData(response.data);
       console.log(response);
     } catch (error) {
