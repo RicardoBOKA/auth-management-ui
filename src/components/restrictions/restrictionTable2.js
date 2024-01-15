@@ -57,6 +57,7 @@ export default function restrictionTable2({ data, setNewData }) {
     console.log('Selection : ');
     newRowSelectionModel.forEach((element) => {
       console.log(element);
+      console.log(element);
     });
     setRowSelectionModel(newRowSelectionModel);
   };
