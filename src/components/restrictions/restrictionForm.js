@@ -1,13 +1,123 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Button, TextField, Autocomplete } from '@mui/material';
-// import axios from 'axios';
+import axios from 'axios';
 import DialogContent from '@mui/material/DialogContent';
 
-export default function RestrictionForm({ onClose, onAddRestriction }) {
+export default function RestrictionForm({ onClose, onAddRestriction, thisTenant, tenantValues }) {
   const [target_name, setTarget_Name] = useState(['']);
   const [target_id, setTarget_Id] = useState(['']);
-  const [data, setData] = useState(['']);
+  const [value, setValue] = useState(['']);
   const [name, setName] = useState('');
+
+  const [services, setServices] = useState(['']);
+  const [policies, setPolicies] = useState(['']);
+
+  // const GeTenantData = (type) => {
+  //   if (type === 'name') {
+  //     const name = tenantValues.filter((e) => e.id === thisTenant)[0].name;
+  //     return name;
+  //   } else if (type === 'id') {
+  //     const id = tenantValues.filter((e) => e.id === thisTenant)[0].id;
+  //     return id;
+  //   } else {
+  //     return tenantValues.filter((e) => e.id === thisTenant)[0];
+  //   }
+  // };
+
+  const policiesTargets = async (thisTenant) => {
+    const tenantName = tenantValues.find((tenant) => tenant.id === thisTenant).name;
+    console.log('tenantName', tenantName);
+    try {
+      const response = await axios.get(`http://localhost:8085/v1/policies/?skip=0&limit=1000`, {
+        headers: {
+          Accept: '*/*',
+          'fiware-service': tenantName,
+          'fiware-servicepath': '/#'
+        }
+      });
+      console.log('policiesTargets :', response.data);
+      setPolicies(response.data);
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de la restriction :", error);
+    }
+  };
+
+  const servicePathTargets = (tenant_id) => {
+    console.log('thisTenant', thisTenant);
+    const tenant = tenantValues.find((tenant) => tenant.id === tenant_id);
+    setServices(tenant.service_paths);
+    return tenant.service_paths;
+  };
+
+  useEffect(() => {
+    servicePathTargets(thisTenant);
+  }, [thisTenant]);
+
+  useEffect(() => {
+    policiesTargets(thisTenant);
+    console.log('thisTenant = ', thisTenant);
+    console.log('tenantValues = ', tenantValues);
+  }, [target_name]);
+
+  const getAutocomplete = () => {
+    switch (target_name) {
+      case 'ServicePath':
+        return (
+          <Grid>
+            <Autocomplete
+              disablePortal
+              id="service_paths"
+              options={services}
+              sx={{ marginBottom: 2, width: '100%' }}
+              getOptionLabel={(option) => (option.path ? option.path : '')}
+              getOptionSelected={(option, value) => option.path === value.path}
+              renderInput={(params) => <TextField {...params} label="Paths from current Tenant" />}
+              onChange={(event, newValue) => setTarget_Id(newValue.id || '')}
+              value={services.find((option) => option.id === target_id) || 'Non defini'}
+            />
+            <TextField
+              type="text"
+              id="target id"
+              label="Target ID"
+              variant="outlined"
+              value={target_id}
+              onChange={(e) => setTarget_Id(e.target.value)}
+              sx={{ marginBottom: 2, width: '100%' }}
+            />
+          </Grid>
+        );
+      case 'Policy':
+        return (
+          <Autocomplete
+            disablePortal
+            id="policies"
+            options={policies}
+            sx={{ marginBottom: 2, width: '100%' }}
+            getOptionLabel={(option) => (option.id ? option.id : '')}
+            getOptionSelected={(option, value) => option.id === value.id}
+            renderInput={(params) => <TextField {...params} label="Policies from current Tenant" />}
+            onChange={(event, newValue) => setTarget_Id(newValue.id || '')}
+            value={policies.find((option) => option.id === target_id) || 'Non defini'}
+          />
+        );
+      case 'Agent':
+        return (
+          <Autocomplete
+            disablePortal
+            id="targets"
+            options={targets}
+            sx={{ marginBottom: 2, width: '100%' }}
+            getOptionLabel={(option) => (option.target ? option.target : target_name)}
+            getOptionSelected={(option, value) => option.target === value.target}
+            renderInput={(params) => <TextField {...params} label="Targets" />}
+            onChange={(event, newValue) => setTarget_Name(newValue.target || '')}
+            value={targets.find((option) => option.target === target_name) || 'Non defini'}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   const handleAutocompleteChange = (event, newValue) => {
     console.log('---');
@@ -19,6 +129,7 @@ export default function RestrictionForm({ onClose, onAddRestriction }) {
     onClose();
   };
 
+  const targets = [{ target: 'ServicePath' }, { target: 'Policy' }, { target: 'Agent' }];
   const options = [
     { name: 'Counter Restriction', type: 'integer' },
     { name: 'Mount Restriction', type: 'float' },
@@ -42,7 +153,7 @@ export default function RestrictionForm({ onClose, onAddRestriction }) {
     const dataType = getDataTypeForRestriction();
     const dataPayload = {
       type: dataType,
-      value: data
+      value: value
     };
     try {
       await onAddRestriction(name, target_name, target_id, dataPayload);
@@ -93,7 +204,18 @@ export default function RestrictionForm({ onClose, onAddRestriction }) {
             value={options.find((option) => option.name === name) || 'Non defini'}
           />
         </Grid>
-        <Grid>
+        <Autocomplete
+          disablePortal
+          id="targets"
+          options={targets}
+          sx={{ marginBottom: 2, width: '100%' }}
+          getOptionLabel={(option) => (option.target ? option.target : target_name)}
+          getOptionSelected={(option, value) => option.target === value.target}
+          renderInput={(params) => <TextField {...params} label="Targets" />}
+          onChange={(event, newValue) => setTarget_Name(newValue.target || '')}
+          value={targets.find((option) => option.target === target_name) || 'Non defini'}
+        />
+        {/* <Grid>
           <TextField
             type="text"
             id="target table"
@@ -101,10 +223,22 @@ export default function RestrictionForm({ onClose, onAddRestriction }) {
             variant="outlined"
             value={target_name}
             onChange={(e) => setTarget_Name(e.target.value)}
-            sx={{ marginBottom: 2, width: '50%' }}
+            sx={{ marginBottom: 2, width: '100%' }}
           />
-        </Grid>
-        <Grid>
+        </Grid> */}
+        {/* <Autocomplete
+          disablePortal
+          id="service_paths"
+          options={services}
+          sx={{ marginBottom: 2, width: '100%' }}
+          getOptionLabel={(option) => (option.path ? option.path : '')}
+          getOptionSelected={(option, value) => option.id === value.id}
+          renderInput={(params) => <TextField {...params} label="Services" />}
+          onChange={(event, newValue) => setTarget_Id(newValue.id || '')}
+          value={services.find((option) => option.id === target_id) || 'Non defini'}
+        /> */}
+        {getAutocomplete()}
+        {/* <Grid>
           <TextField
             type="text"
             id="target id"
@@ -112,18 +246,18 @@ export default function RestrictionForm({ onClose, onAddRestriction }) {
             variant="outlined"
             value={target_id}
             onChange={(e) => setTarget_Id(e.target.value)}
-            sx={{ marginBottom: 2, width: '50%' }}
+            sx={{ marginBottom: 2, width: '100%' }}
           />
-        </Grid>
+        </Grid> */}
         <Grid>
           <TextField
             type="text"
-            id="data"
-            label="Data"
+            id="value"
+            label="Value"
             variant="outlined"
-            value={data}
-            onChange={(e) => setData(e.target.value)}
-            sx={{ marginBottom: 2, width: '50%' }}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            sx={{ marginBottom: 2, width: '25%' }}
           />
         </Grid>
         <Grid>

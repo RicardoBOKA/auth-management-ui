@@ -6,7 +6,7 @@ import RestrictionTable2 from '../components/restrictions/restrictionTable2';
 import RestrictionForm from '../components/restrictions/restrictionForm';
 import AddButton from '../components/shared/addButton';
 
-export default function RestrictionPage() {
+export default function RestrictionPage({ thisTenant, tenantValues }) {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -46,6 +46,8 @@ export default function RestrictionPage() {
         }
       );
       fetchData();
+      console.log('thisTenant = ', thisTenant);
+      console.log('tenantValues = ', tenantValues);
       return response.data;
     } catch (error) {
       console.error("Erreur lors de l'ajout de la restriction :", error);
@@ -64,7 +66,14 @@ export default function RestrictionPage() {
           </Grid>
         </Grid>
         <AddButton
-          pageType={<RestrictionForm onClose={() => setOpen(false)} onAddRestriction={addRestriction} />}
+          pageType={
+            <RestrictionForm
+              onClose={() => setOpen(false)}
+              onAddRestriction={addRestriction}
+              thisTenant={thisTenant}
+              tenantValues={tenantValues}
+            />
+          }
           setOpen={setOpen}
           status={open}
           graphqlErrors={null}

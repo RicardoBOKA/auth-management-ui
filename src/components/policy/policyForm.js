@@ -273,6 +273,10 @@ export default function PolicyForm({
               variant: 'success'
             });
           })
+          .then(() => {
+            //if restriction :
+            // mise à jour des variables à mettre dans restriction
+          })
           .catch((e) => {
             getServices();
             setError(e);
@@ -335,6 +339,31 @@ export default function PolicyForm({
         break;
     }
   };
+
+  const thisTenant = [{ id: 'f9a13258-6299-4428-a1b6-b881827f6998' }];
+
+  const tenantValues = [
+    {
+      name: 'Tenant4',
+      id: '7eab84c1-940b-4eeb-bf6a-10a125b01db3',
+      service_paths: [
+        {
+          path: '/',
+          id: '790fac28-feed-4283-83d4-08653a43876b',
+          tenant_id: '7eab84c1-940b-4eeb-bf6a-10a125b01db3',
+          parent_id: null,
+          scope: null,
+          children: []
+        }
+      ],
+      props: {
+        name: 'Tenant4',
+        icon: 'none',
+        primaryColor: '#8086ba',
+        secondaryColor: '#8086ba'
+      }
+    }
+  ];
 
   const [dataModel, setDataModel] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -828,7 +857,12 @@ export default function PolicyForm({
             </Grid>
           </Zoom>
           <Grid>
-            <RestrictionForm onClose={() => setOpen(open)} onAddRestriction={addRestriction} />
+            <RestrictionForm
+              onClose={() => setOpen(open)}
+              onAddRestriction={addRestriction}
+              thisTenant={thisTenant}
+              tenantValues={tenantValues}
+            />
           </Grid>
         </Grid>
       </DialogContent>
