@@ -249,14 +249,16 @@ export default function PolicyPage({ getTenants, tenantValues, thisTenant, graph
             <PolicyForm
               tenantName={GeTenantData}
               action="create"
-              agentsTypes={agentsTypes}
-              services={services}
+              agentsTypes={agentsTypes} //2
+              services={services} //1
               getServices={getServices}
               access_modes={access_modes}
               title={<Trans>policies.titles.new</Trans>}
               close={setOpen}
               token={token}
               env={env}
+              thisTenant={thisTenant}
+              tenantValues={tenantValues}
             ></PolicyForm>
           }
           setOpen={setOpen}

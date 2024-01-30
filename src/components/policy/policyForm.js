@@ -46,13 +46,15 @@ export default function PolicyForm({
   close,
   action,
   tenantName,
-  services,
+  services, //1
   access_modes,
-  agentsTypes,
+  agentsTypes, //2
   getServices,
-  data,
+  data, //3
   token,
-  env
+  env,
+  thisTenant,
+  tenantValues
 }) {
   const [msg, sendNotification] = useNotification();
   const [open, setOpen] = useState(false);
@@ -220,6 +222,11 @@ export default function PolicyForm({
   const addAgents = () => {
     setAgentsMap([...agentsMap, { type: null, name: '' }]);
   };
+
+  const addRestr = () => {
+    setOpen((open) => !open);
+  };
+
   const removeAgents = (index) => {
     const newArray = agentsMap;
     newArray.splice(index, 1);
@@ -232,8 +239,10 @@ export default function PolicyForm({
       for (const thisAgent of agentsMap) {
         agentMapped.push(thisAgent.type + ':' + thisAgent.name);
       }
+      console.log('agentsMap = ', agentsMap);
       return agentMapped;
     } else {
+      console.log('agentOthers = ', agentOthers);
       return agentOthers;
     }
   };
@@ -259,6 +268,11 @@ export default function PolicyForm({
             }
           )
           .then(() => {
+            if (open) {
+              //Si on a une restriction, => post la restriciton aussi.e
+            }
+          })
+          .then(() => {
             getServices();
             close(false);
             sendNotification({
@@ -272,10 +286,6 @@ export default function PolicyForm({
               ),
               variant: 'success'
             });
-          })
-          .then(() => {
-            //if restriction :
-            // mise à jour des variables à mettre dans restriction
           })
           .catch((e) => {
             getServices();
@@ -340,30 +350,30 @@ export default function PolicyForm({
     }
   };
 
-  const thisTenant = [{ id: 'f9a13258-6299-4428-a1b6-b881827f6998' }];
+  // const thisTenant = [{ id: '7eab84c1-940b-4eeb-bf6a-10a125b01db3' }];
 
-  const tenantValues = [
-    {
-      name: 'Tenant4',
-      id: '7eab84c1-940b-4eeb-bf6a-10a125b01db3',
-      service_paths: [
-        {
-          path: '/',
-          id: '790fac28-feed-4283-83d4-08653a43876b',
-          tenant_id: '7eab84c1-940b-4eeb-bf6a-10a125b01db3',
-          parent_id: null,
-          scope: null,
-          children: []
-        }
-      ],
-      props: {
-        name: 'Tenant4',
-        icon: 'none',
-        primaryColor: '#8086ba',
-        secondaryColor: '#8086ba'
-      }
-    }
-  ];
+  // const tenantValues = [
+  //   {
+  //     name: 'Tenant4',
+  //     id: '7eab84c1-940b-4eeb-bf6a-10a125b01db3',
+  //     service_paths: [
+  //       {
+  //         path: '/',
+  //         id: '790fac28-feed-4283-83d4-08653a43876b',
+  //         tenant_id: '7eab84c1-940b-4eeb-bf6a-10a125b01db3',
+  //         parent_id: null,
+  //         scope: null,
+  //         children: []
+  //       }
+  //     ],
+  //     props: {
+  //       name: 'Tenant4',
+  //       icon: 'none',
+  //       primaryColor: '#8086ba',
+  //       secondaryColor: '#8086ba'
+  //     }
+  //   }
+  // ];
 
   const [dataModel, setDataModel] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -684,12 +694,6 @@ export default function PolicyForm({
               </Select>
               <FormHelperText error={errorCases(formType)}>{errorText(formType)}</FormHelperText>
             </FormControl>
-            {/* <AddButton
-              pageType={<RestrictionForm onClose={() => setOpen(false)} onAddRestriction={addRestriction} />}
-              setOpen={setOpen}
-              status={open}
-              graphqlErrors={null}
-            /> */}
           </Grid>
           <Zoom
             in={formType !== '' && formType === 'specific'}
@@ -856,13 +860,40 @@ export default function PolicyForm({
               </Grid>
             </Grid>
           </Zoom>
-          <Grid>
-            <RestrictionForm
-              onClose={() => setOpen(open)}
-              onAddRestriction={addRestriction}
-              thisTenant={thisTenant}
-              tenantValues={tenantValues}
-            />
+        </Grid>
+        <Grid>
+          {open && (
+            <Grid>
+              <RestrictionForm
+                onClose={() => setOpen(false)}
+                onAddRestriction={addRestriction}
+                thisTenant={thisTenant}
+                tenantValues={tenantValues}
+                restrictionPage={false}
+                agent={agentMapper()}
+                action={'create'}
+                // agent={}
+                // service={}
+              />
+            </Grid>
+          )}
+          <Grid
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            spacing={0}
+            style={{ marginTop: '30px' }}
+          >
+            <Button
+              variant="outlined"
+              startIcon={!open ? <AddIcon /> : ''}
+              onClick={() => {
+                addRestr();
+              }}
+            >
+              {open ? 'Remove Restriction' : 'Add Restriction'}
+            </Button>
           </Grid>
         </Grid>
       </DialogContent>

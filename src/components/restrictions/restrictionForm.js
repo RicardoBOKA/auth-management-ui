@@ -3,7 +3,16 @@ import { Grid, Button, TextField, Autocomplete } from '@mui/material';
 import axios from 'axios';
 import DialogContent from '@mui/material/DialogContent';
 
-export default function RestrictionForm({ onClose, onAddRestriction, thisTenant, tenantValues }) {
+export default function RestrictionForm({
+  onClose,
+  thisTenant,
+  tenantValues,
+  restrictionPage,
+  agent,
+  agents,
+  setNewRestr
+  //setAgents
+}) {
   const [target_name, setTarget_Name] = useState(['']);
   const [target_id, setTarget_Id] = useState(['']);
   const [value, setValue] = useState(['']);
@@ -11,22 +20,10 @@ export default function RestrictionForm({ onClose, onAddRestriction, thisTenant,
 
   const [services, setServices] = useState(['']);
   const [policies, setPolicies] = useState(['']);
+  // const [agents, setAgents] = useState(['']);
 
-  // const GeTenantData = (type) => {
-  //   if (type === 'name') {
-  //     const name = tenantValues.filter((e) => e.id === thisTenant)[0].name;
-  //     return name;
-  //   } else if (type === 'id') {
-  //     const id = tenantValues.filter((e) => e.id === thisTenant)[0].id;
-  //     return id;
-  //   } else {
-  //     return tenantValues.filter((e) => e.id === thisTenant)[0];
-  //   }
-  // };
-
-  const policiesTargets = async (thisTenant) => {
-    const tenantName = tenantValues.find((tenant) => tenant.id === thisTenant).name;
-    console.log('tenantName', tenantName);
+  const policiesTargets = async (tenant_id) => {
+    const tenantName = tenantValues.find((tenant) => tenant.id === tenant_id).name;
     try {
       const response = await axios.get(`http://localhost:8085/v1/policies/?skip=0&limit=1000`, {
         headers: {
@@ -43,10 +40,12 @@ export default function RestrictionForm({ onClose, onAddRestriction, thisTenant,
   };
 
   const servicePathTargets = (tenant_id) => {
-    console.log('thisTenant', thisTenant);
-    const tenant = tenantValues.find((tenant) => tenant.id === tenant_id);
-    setServices(tenant.service_paths);
-    return tenant.service_paths;
+    try {
+      const tenant = tenantValues.find((tenant) => tenant.id === tenant_id);
+      setServices(tenant.service_paths);
+    } catch (error) {
+      console.log('Erreu', error);
+    }
   };
 
   useEffect(() => {
@@ -55,9 +54,21 @@ export default function RestrictionForm({ onClose, onAddRestriction, thisTenant,
 
   useEffect(() => {
     policiesTargets(thisTenant);
-    console.log('thisTenant = ', thisTenant);
-    console.log('tenantValues = ', tenantValues);
   }, [target_name]);
+
+  // const handleModify = async () => {
+  //   const dataType = params.data
+  //   try {
+  //     await onAddRestriction(params.name, params.table_target, params.table_target_id, dataType);
+  //     handleClose();
+  //   } catch (error) {
+  //     console.error("Une erreur s'est produite :", error);
+  //   }
+  // };
+
+  // const handleAutocomplete = () => {
+
+  // };
 
   const getAutocomplete = () => {
     switch (target_name) {
@@ -101,34 +112,48 @@ export default function RestrictionForm({ onClose, onAddRestriction, thisTenant,
           />
         );
       case 'Agent':
-        return (
-          <Autocomplete
-            disablePortal
-            id="targets"
-            options={targets}
-            sx={{ marginBottom: 2, width: '100%' }}
-            getOptionLabel={(option) => (option.target ? option.target : target_name)}
-            getOptionSelected={(option, value) => option.target === value.target}
-            renderInput={(params) => <TextField {...params} label="Targets" />}
-            onChange={(event, newValue) => setTarget_Name(newValue.target || '')}
-            value={targets.find((option) => option.target === target_name) || 'Non defini'}
-          />
-        );
+        if (!restrictionPage) {
+          return (
+            <Grid sx={{ marginBottom: 2, width: '100%' }}>
+              <TextField
+                id="agent"
+                label="Agent"
+                variant="outlined"
+                defaultValue={agent}
+                disabled
+                sx={{
+                  width: '100%'
+                }}
+              />
+            </Grid>
+          );
+        } else {
+          return (
+            <Autocomplete
+              disablePortal
+              id="agents"
+              options={agents}
+              sx={{ marginBottom: 2, width: '100%' }}
+              getOptionLabel={(option) => (option.name ? option.name : '')}
+              getOptionSelected={(option, value) => option.iri === value.iri}
+              renderInput={(params) => <TextField {...params} label="agents from current Tenant" />}
+              onChange={(event, newValue) => setTarget_Id(newValue.iri || '')}
+              value={agents.find((option) => option.iri === target_id) || 'Non defini'}
+            />
+          );
+        }
+      //Si non, si RestrictionPage => ...
       default:
         return null;
     }
   };
 
   const handleAutocompleteChange = (event, newValue) => {
-    console.log('---');
-    console.log(newValue.name);
     setName(newValue.name);
   };
-
   const handleClose = () => {
     onClose();
   };
-
   const targets = [{ target: 'ServicePath' }, { target: 'Policy' }, { target: 'Agent' }];
   const options = [
     { name: 'Counter Restriction', type: 'integer' },
@@ -142,7 +167,6 @@ export default function RestrictionForm({ onClose, onAddRestriction, thisTenant,
     { name: 'Role Restriction', type: 'string' },
     { name: 'State Restriction', type: 'string' }
   ];
-
   function getDataTypeForRestriction() {
     const selectedOption = options.find((option) => option.name === name);
     const dataType = selectedOption ? selectedOption.type : 'string';
@@ -156,10 +180,26 @@ export default function RestrictionForm({ onClose, onAddRestriction, thisTenant,
       value: value
     };
     try {
-      await onAddRestriction(name, target_name, target_id, dataPayload);
+      // await onAddRestriction(name, target_name, target_id, dataPayload);
+      const response = await axios.post(
+        `http://localhost:8085/v1/restrictions/?target_name=${target_name}&target_id=${target_id}`,
+        {
+          name: name,
+          data: JSON.stringify(dataPayload)
+        },
+        {
+          headers: {
+            Accept: '*/*',
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      setNewRestr((old) => !old);
+      console.log('REP ONSE =', response);
       handleClose();
     } catch (error) {
       console.error("Une erreur s'est produite :", error);
+      throw error.response;
     }
   };
 

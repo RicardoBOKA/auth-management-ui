@@ -657,7 +657,11 @@ export default class App extends Component {
                       <Route
                         path="/restriction"
                         element={
-                          <RestrictionPage thisTenant={this.state.thisTenant} tenantValues={this.state.tenants} />
+                          <RestrictionPage
+                            thisTenant={this.state.thisTenant}
+                            tenantValues={this.state.tenants}
+                            env={env}
+                          />
                         }
                       />
 

@@ -3,30 +3,26 @@ import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
-// import { useMemo } from 'react';
-
-// Code pour extraire l'ensemble des colonnes pour les placer diréctement dans la table
-// const columns = useMemo(() => {
-//     if (!data || data.length === 0) {
-//       return [];
-//     }
-
-//     const keys = Object.keys(data[0]);
-//     const generColumns = keys.map((key) => ({
-//       field: key,
-//       headerName: key.charAt(0).toUpperCase() + key.slice(1),
-//       flex: 1
-//     }));
-
-//     return generColumns;
-//   }, [data]);
+// import AddButton from '../shared/addButton';
+// import RestrictionForm from './restrictionForm';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 300 },
   { field: 'name', headerName: 'Name', flex: 1 },
   { field: 'table_target', headerName: 'Table Target', flex: 1 },
   { field: 'table_target_id', headerName: 'Table Target ID', flex: 1 },
-  { field: 'data', headerName: 'Data', flex: 1 }
+  { field: 'data', headerName: 'Data', flex: 1 },
+  {
+    field: 'actions',
+    headerName: 'Actions',
+    width: 150,
+    renderCell: (params) => (
+      //rajouter restrictionform
+      <Button variant="contained" color="primary" onClick={() => console.log('params row =', params.row)}>
+        Modifier
+      </Button>
+    )
+  }
 ];
 
 export default function restrictionTable2({ data, setNewData }) {
@@ -54,10 +50,10 @@ export default function restrictionTable2({ data, setNewData }) {
   }, [changement]);
 
   const rowSelection = (newRowSelectionModel) => {
-    console.log('Selection : ');
-    newRowSelectionModel.forEach((element) => {
-      console.log(element);
-    });
+    // console.log('Selection : ');
+    // newRowSelectionModel.forEach((element) => {
+    //   console.log(element);
+    // });
     setRowSelectionModel(newRowSelectionModel);
   };
 
@@ -67,7 +63,9 @@ export default function restrictionTable2({ data, setNewData }) {
     data: item.data ? item.data : 'N/A',
     // data: item.parsedData ? item.parsedData.value : 'N/A',
     table_target: item.table_target_id.split(':')[0],
-    table_target_id: `${item.table_target_id.split(':')[1]}:${item.table_target_id.split(':')[2]}`
+    table_target_id: `${item.table_target_id.split(':')[1]} ${
+      item.table_target_id.split(':')[2] ? ':' + item.table_target_id.split(':')[2] : ''
+    }`
   }));
 
   useEffect(() => {
@@ -85,11 +83,6 @@ export default function restrictionTable2({ data, setNewData }) {
           }
         })
         .then(() => {
-          // console.log('i = ' + i);
-          // const updatedData = localData.filter((item) => item.id !== row);
-          // console.log('updatedData : ' + updatedData);
-          // setData(updatedData);
-          // setLocalData(updatedData);
           setChangement((changement) => !changement);
           console.log('Row deleted ' + 'i = ' + i + ' : ' + row);
         })
