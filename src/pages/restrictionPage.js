@@ -6,11 +6,20 @@ import RestrictionTable2 from '../components/restrictions/restrictionTable2';
 import RestrictionForm from '../components/restrictions/restrictionForm';
 import AddButton from '../components/shared/addButton';
 
-export default function RestrictionPage({ thisTenant, tenantValues, env }) {
+export default function RestrictionPage({ thisTenant, tenantValues, env, token }) {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
   const [newRestr, setNewRestr] = useState(false);
   const [agentsTypes, setagentsTypes] = React.useState([]);
+
+  const GeTenantData = (type) => {
+    const tenantArray = tenantValues.filter((e) => e.id === thisTenant);
+    if (type === 'name') {
+      return tenantArray[0].name;
+    } else {
+      return tenantArray[0].id;
+    }
+  };
 
   React.useEffect(() => {
     if (!(thisTenant === null || typeof thisTenant === 'undefined')) {
@@ -25,7 +34,7 @@ export default function RestrictionPage({ thisTenant, tenantValues, env }) {
   }, [thisTenant]);
 
   const changeData = (newData) => {
-    console.log('newData reçue de restrictionForm :', newData);
+    // console.log('newData reçue de restrictionForm :', newData);
     setData(newData);
   };
 
@@ -54,7 +63,18 @@ export default function RestrictionPage({ thisTenant, tenantValues, env }) {
         <Grid item xs={12}>
           <Grid container spacing={2} direction="column">
             <Grid item xs={12}>
-              <RestrictionTable2 data={data} setNewData={changeData} />
+              <RestrictionTable2
+                data={data}
+                setNewData={changeData}
+                onClose={() => setOpen(false)}
+                thisTenant={thisTenant}
+                tenantValues={tenantValues}
+                setNewRestr={setNewRestr}
+                tenantName={GeTenantData}
+                agentsTypes={agentsTypes}
+                env={env}
+                token={token}
+              />
             </Grid>
           </Grid>
         </Grid>
@@ -64,9 +84,12 @@ export default function RestrictionPage({ thisTenant, tenantValues, env }) {
               onClose={() => setOpen(false)}
               thisTenant={thisTenant}
               tenantValues={tenantValues}
-              restrictionPage={true}
-              agents={agentsTypes}
               setNewRestr={setNewRestr}
+              tenantName={GeTenantData}
+              agentsTypes={agentsTypes}
+              env={env}
+              token={token}
+              action={'create'}
             />
           }
           setOpen={setOpen}

@@ -661,6 +661,7 @@ export default class App extends Component {
                             thisTenant={this.state.thisTenant}
                             tenantValues={this.state.tenants}
                             env={env}
+                            token={this.props.accessToken}
                           />
                         }
                       />

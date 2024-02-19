@@ -92,6 +92,12 @@
       "path": "service path{{name}}"
     },
     "form": {
+      "name":"Name for restriction",
+      "target":"Target to restrict",
+      "value":"Value for the restriction",
+      "agent": "Restriction on agent",
+      "service":"Restriction on Service Path",
+      "policy":"Restriction on policy",
       "restriction":"Restriction",
       "restrictionType":"Restriction Type"
     }
@@ -225,7 +231,7 @@
     },
     "test":{
       "title":"Restriction",
-      "description": "Ceci est un bloc test pour comprendre la logique et la structure du code. On va commencer avec une restriciton"
+      "description": "Ceci est un bloc test pour comprendre la logique et la structure du code. On va commencer avec une restriction"
     }
   },
   "common": {

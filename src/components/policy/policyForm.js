@@ -31,8 +31,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import { ApolloClient, InMemoryCache, gql, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { useState } from 'react';
-import RestrictionForm from '../restrictions/restrictionForm';
+// import { useState } from 'react';
+// import RestrictionForm from '../restrictions/restrictionForm';
 // import AddButton from '../shared/addButton';
 
 const CustomDialogTitle = styled(AppBar)({
@@ -46,40 +46,40 @@ export default function PolicyForm({
   close,
   action,
   tenantName,
-  services, //1
+  services,
   access_modes,
-  agentsTypes, //2
+  agentsTypes, //#
   getServices,
-  data, //3
-  token,
-  env,
-  thisTenant,
-  tenantValues
+  data,
+  token, //#
+  env //#
+  // thisTenant,
+  // tenantValues
 }) {
   const [msg, sendNotification] = useNotification();
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
-  const addRestriction = async (name, target_name, target_id, data) => {
-    try {
-      const response = await axios.post(
-        `http://localhost:8085/v1/restrictions/?target_name=${target_name}&target_id=${target_id}`,
-        {
-          name: name,
-          data: JSON.stringify(data)
-        },
-        {
-          headers: {
-            Accept: '*/*',
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      console.log('Restriction ajoutée :', response.data);
-      setOpen(false);
-    } catch (error) {
-      console.error("Erreur lors de l'ajout de la restriction :", error);
-    }
-  };
+  // const addRestriction = async (name, target_name, target_id, data) => {
+  //   try {
+  //     const response = await axios.post(
+  //       `http://localhost:8085/v1/restrictions/?target_name=${target_name}&target_id=${target_id}`,
+  //       {
+  //         name: name,
+  //         data: JSON.stringify(data)
+  //       },
+  //       {
+  //         headers: {
+  //           Accept: '*/*',
+  //           'Content-Type': 'application/json'
+  //         }
+  //       }
+  //     );
+  //     console.log('Restriction ajoutée :', response.data);
+  //     setOpen(false);
+  //   } catch (error) {
+  //     console.error("Erreur lors de l'ajout de la restriction :", error);
+  //   }
+  // };
 
   typeof env === 'undefined' ? log.setDefaultLevel('debug') : log.setLevel(env.LOG_LEVEL);
   const httpLink = createHttpLink({
@@ -223,10 +223,6 @@ export default function PolicyForm({
     setAgentsMap([...agentsMap, { type: null, name: '' }]);
   };
 
-  const addRestr = () => {
-    setOpen((open) => !open);
-  };
-
   const removeAgents = (index) => {
     const newArray = agentsMap;
     newArray.splice(index, 1);
@@ -239,10 +235,8 @@ export default function PolicyForm({
       for (const thisAgent of agentsMap) {
         agentMapped.push(thisAgent.type + ':' + thisAgent.name);
       }
-      console.log('agentsMap = ', agentsMap);
       return agentMapped;
     } else {
-      console.log('agentOthers = ', agentOthers);
       return agentOthers;
     }
   };
@@ -672,6 +666,9 @@ export default function PolicyForm({
           <Grid item xs={12}>
             <Typography variant="subtitle1" gutterBottom component="div" color="primary">
               <Trans>policies.form.actorTitle</Trans>
+              {action === 'create'
+                ? console.log('formType : ', formType, '\nagentOthers : ', agentOthers, '\nagentsMap : ', agentsMap)
+                : 'Test'}
             </Typography>
           </Grid>
           <Grid item xs={12} sx={{ marginBottom: '2%' }}>
@@ -861,7 +858,7 @@ export default function PolicyForm({
             </Grid>
           </Zoom>
         </Grid>
-        <Grid>
+        {/* <Grid>
           {open && (
             <Grid>
               <RestrictionForm
@@ -895,7 +892,7 @@ export default function PolicyForm({
               {open ? 'Remove Restriction' : 'Add Restriction'}
             </Button>
           </Grid>
-        </Grid>
+        </Grid> */}
       </DialogContent>
     </div>
   );
